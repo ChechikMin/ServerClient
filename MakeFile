@@ -1,0 +1,11 @@
+all: 
+	g++ TcpServer.cpp -o TcpServer -lpthread 
+	g++ UDPServer.cpp -o UDPServer
+	g++ TcpClient.cpp -o TcpClient 
+	g++ UDPClient.cpp -o UDPClient
+
+clean:
+	rm -rf *.o TcpServer
+	rm -rf *.o UDPServer
+	rm -rf *.o TcpClient
+	rm -rf *.o UDPClient
