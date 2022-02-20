@@ -69,6 +69,7 @@ void UdpServer ::exec()
     {
         if (status() == Connected)
         {
+
             recvData(serverSocket);
 	    transformData();                      
             sendData(serverSocket);              
@@ -91,17 +92,33 @@ void UdpServer :: sendData(Socket socket){
 std::string UdpServer::recvData(Socket socket){
     char buff[16];
     int answer;
-    	socklen_t len = sizeof(cli);
+	fd_set fd_in, fd_out;
+	struct timeval tv;
 
-        answer = recvfrom(socket, buff, 16, MSG_WAITALL, ( struct sockaddr *) &cli,
-                &len);
+	FD_ZERO(&fd_in);
 
-        if(answer)
-        {
-            //std::cout<<buff;
-            msgToClient = std::string(buff);
-        }
-    return msgToClient;
+	FD_SET(sock1, &fd_in);
+
+	tv.tv_sec = 0;
+	tv.tv_usec = 0;
+
+	while (true) {
+		int ret = select(socket, &fd_in, NULL, NULL, 0);
+
+		if (ret == -1)
+			continue;
+			socklen_t len = sizeof(cli);
+
+		answer = recvfrom(socket, buff, 16, MSG_WAITALL, (struct sockaddr *) &cli,
+			&len);
+
+		if (answer)
+		{
+			//std::cout<<buff;
+			msgToClient = std::string(buff);
+		}
+		return msgToClient;
+	}
 }
 uint8_t UdpServer :: closeServer(){
         close(serverSocket);
